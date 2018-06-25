@@ -1,0 +1,2 @@
+# iOS-EchoCancellation
+使用AudioUnit进行声音采集，同时实现回声消除。采用AudioQueue对采集的pcm音频流进行播放
