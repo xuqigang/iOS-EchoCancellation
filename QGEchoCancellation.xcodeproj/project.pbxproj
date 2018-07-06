@@ -15,7 +15,6 @@
 		7B853AC320E07D1200AA121B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B853AC220E07D1200AA121B /* main.m */; };
 		7B853ACD20E07D1200AA121B /* QGEchoCancellationUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B853ACC20E07D1200AA121B /* QGEchoCancellationUITests.m */; };
 		7B853AD920E07D8000AA121B /* QGAudioRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B853AD820E07D8000AA121B /* QGAudioRecord.m */; };
-		7B853ADF20E0E15900AA121B /* QGAudioPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B853ADD20E0E15900AA121B /* QGAudioPlayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7B5FA26920E489A0006EF634 /* QGEchoCancellation.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QGEchoCancellation.entitlements; sourceTree = "<group>"; };
 		7B853AB020E07D1000AA121B /* QGEchoCancellation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QGEchoCancellation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B853AB320E07D1000AA121B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7B853AB420E07D1000AA121B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -44,8 +44,6 @@
 		7B853ACE20E07D1200AA121B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7B853AD720E07D8000AA121B /* QGAudioRecord.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QGAudioRecord.h; sourceTree = "<group>"; };
 		7B853AD820E07D8000AA121B /* QGAudioRecord.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QGAudioRecord.m; sourceTree = "<group>"; };
-		7B853ADD20E0E15900AA121B /* QGAudioPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QGAudioPlayer.m; sourceTree = "<group>"; };
-		7B853ADE20E0E15900AA121B /* QGAudioPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QGAudioPlayer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,12 +64,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7B5FA26620E489A0006EF634 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7B853AA720E07D1000AA121B = {
 			isa = PBXGroup;
 			children = (
 				7B853AB220E07D1000AA121B /* QGEchoCancellation */,
 				7B853ACB20E07D1200AA121B /* QGEchoCancellationUITests */,
 				7B853AB120E07D1000AA121B /* Products */,
+				7B5FA26620E489A0006EF634 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -87,8 +93,7 @@
 		7B853AB220E07D1000AA121B /* QGEchoCancellation */ = {
 			isa = PBXGroup;
 			children = (
-				7B853ADE20E0E15900AA121B /* QGAudioPlayer.h */,
-				7B853ADD20E0E15900AA121B /* QGAudioPlayer.m */,
+				7B5FA26920E489A0006EF634 /* QGEchoCancellation.entitlements */,
 				7B853AD720E07D8000AA121B /* QGAudioRecord.h */,
 				7B853AD820E07D8000AA121B /* QGAudioRecord.m */,
 				7B853AB320E07D1000AA121B /* AppDelegate.h */,
@@ -162,6 +167,14 @@
 				TargetAttributes = {
 					7B853AAF20E07D1000AA121B = {
 						CreatedOnToolsVersion = 9.3;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.InterAppAudio = {
+								enabled = 0;
+							};
+						};
 					};
 					7B853AC720E07D1200AA121B = {
 						CreatedOnToolsVersion = 9.3;
@@ -215,7 +228,6 @@
 			files = (
 				7B853AB820E07D1000AA121B /* ViewController.m in Sources */,
 				7B853AC320E07D1200AA121B /* main.m in Sources */,
-				7B853ADF20E0E15900AA121B /* QGAudioPlayer.m in Sources */,
 				7B853AB520E07D1000AA121B /* AppDelegate.m in Sources */,
 				7B853AD920E07D8000AA121B /* QGAudioRecord.m in Sources */,
 			);

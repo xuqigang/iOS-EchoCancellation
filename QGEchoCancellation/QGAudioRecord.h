@@ -14,6 +14,7 @@
 @protocol QGAudioRecordDelegate <NSObject>
 
 - (void)audioRecord:(QGAudioRecord*)AudioRecord recordCallBack:(AudioBufferList*)bufferList;
+- (void)audioPlayer:(QGAudioRecord*)AudioRecord playCallBack:(AudioBufferList*)bufferList inNumberFrames:(UInt32)inNumberFrames;
 
 @end
 
@@ -23,9 +24,12 @@
 
 + (instancetype)shareManager;
 
-- (void)startRecord;
-- (void)stopRecord;
-
+//- (void)startRecord;
+//- (void)stopRecord;
+//- (void)startPlay;
+//- (void)stopPlay;
+- (void)start;
+- (void)stop;
 - (void)invalid;
 
 @end

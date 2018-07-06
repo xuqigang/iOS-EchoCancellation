@@ -32,22 +32,34 @@
 {
     self = [super init];
     if (self) {
-        [self setupSession];
         [self setupAUGraph];
-        [self setupRemoteIOUnit];
         [self setupEchoCancellation];
+        [self setupRemoteIOUnit];
+        
     }
     return self;
 }
-- (void)startRecord{
+- (void)start{
+    [self setupSession];
+
     CheckError(AUGraphInitialize(_graph),"AUGraphInitialize failed");
     CheckError(AUGraphStart(_graph), "AUGraphStart failed");
     AudioOutputUnitStart(_remoteIOUnit);
 }
-- (void)stopRecord{
+- (void)stop{
     CheckError(AUGraphUninitialize(_graph), "AUGraphInitialize failed");
     CheckError(AUGraphStop(_graph), "AUGraphStop failed");
     AudioOutputUnitStop(_remoteIOUnit);
+    NSError *error = nil;
+    AVAudioSession* session = [AVAudioSession sharedInstance];
+    [session setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:&error];
+    [session setActive:YES error:nil];
+}
+- (void)startRecord{
+    
+}
+- (void)stopRecord{
+    
 }
 - (void)invalid{
     
@@ -68,7 +80,8 @@
     inputcd.componentType = kAudioUnitType_Output;
     inputcd.componentSubType = kAudioUnitSubType_VoiceProcessingIO;
     inputcd.componentManufacturer = kAudioUnitManufacturer_Apple;
-    
+    inputcd.componentFlagsMask = 0;
+    inputcd.componentFlags = 0;
     AUNode remoteIONode;
     //Add node to the graph
     CheckError(AUGraphAddNode(_graph,
@@ -89,11 +102,11 @@
 }
 
 - (void)setupEchoCancellation{
-    UInt32 echoCancellation;
+    UInt32 echoCancellation = 1;
     UInt32 size = sizeof(echoCancellation);
     CheckError(AudioUnitSetProperty(_remoteIOUnit,
                                     kAUVoiceIOProperty_BypassVoiceProcessing,
-                                    kAudioUnitScope_Global,
+                                    kAudioUnitScope_Input,
                                     0,
                                     &echoCancellation,
                                     size),
@@ -114,7 +127,7 @@
                "Open input of bus 1 failed");
 //    Open output of bus 0(output speaker)
     //禁用播放功能
-    UInt32 outputEnableFlag = 0;
+    UInt32 outputEnableFlag = 1;
     CheckError(AudioUnitSetProperty(_remoteIOUnit,
                                     kAudioOutputUnitProperty_EnableIO,
                                     kAudioUnitScope_Output,
@@ -139,6 +152,13 @@
                                     &_streamFormat,
                                     sizeof(_streamFormat)),
                "kAudioUnitProperty_StreamFormat of bus 0 failed");
+    CheckError(AudioUnitSetProperty(_remoteIOUnit,
+                                    kAudioUnitProperty_StreamFormat,
+                                    kAudioUnitScope_Output,
+                                    1,
+                                    &_streamFormat,
+                                    sizeof(_streamFormat)),
+               "kAudioUnitProperty_StreamFormat of bus 1 failed");
     
     //音频采集结果回调
     AURenderCallbackStruct recordCallback;
@@ -146,11 +166,21 @@
     recordCallback.inputProcRefCon = (__bridge void *)(self);
     CheckError(AudioUnitSetProperty(_remoteIOUnit,
                                 kAudioOutputUnitProperty_SetInputCallback,
-                                    kAudioUnitScope_Global,
+                                    kAudioUnitScope_Output,
                                     1,
                                     &recordCallback,
                                     sizeof(recordCallback)),
                "couldnt set remote i/o render callback for output");
+    AURenderCallbackStruct playCallback;
+    playCallback.inputProc = playCallback_xb;
+    playCallback.inputProcRefCon = (__bridge void *)(self);
+    CheckError(AudioUnitSetProperty(_remoteIOUnit,
+                                    kAudioUnitProperty_SetRenderCallback,
+                                    kAudioUnitScope_Input,
+                                    0,
+                                    &playCallback,
+                                    sizeof(playCallback)),
+               "kAudioUnitProperty_SetRenderCallback failed");
 }
 
 static void CheckError(OSStatus error, const char *operation)
@@ -198,6 +228,28 @@ OSStatus recordCallback_xb(void *inRefCon,
 //
     NSLog(@"InputCallback");
     return noErr;
+}
+OSStatus playCallback_xb(
+                         void *inRefCon,
+                         AudioUnitRenderActionFlags     *ioActionFlags,
+                         const AudioTimeStamp         *inTimeStamp,
+                         UInt32                         inBusNumber,
+                         UInt32                         inNumberFrames,
+                         AudioBufferList             *ioData)
+
+{
+    
+    //TODO: implement this function
+    memset(ioData->mBuffers[0].mData, 0, ioData->mBuffers[0].mDataByteSize);
+    
+    QGAudioRecord *audioRecord = (__bridge QGAudioRecord*)inRefCon;
+    
+    if (audioRecord.delegate && [audioRecord.delegate respondsToSelector:@selector(audioPlayer:playCallBack:inNumberFrames:)]) {
+        [audioRecord.delegate audioPlayer:audioRecord playCallBack:ioData inNumberFrames:inNumberFrames];
+    }
+    
+    NSLog(@"outputRenderTone");
+    return 0;
 }
 
 @end
